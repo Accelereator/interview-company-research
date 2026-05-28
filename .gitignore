@@ -1,0 +1,17 @@
+# 用户生成的报告（包含目标公司信息）
+reports/
+
+# 用户简历（隐私）
+简历/
+resume/
+resumes/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*~

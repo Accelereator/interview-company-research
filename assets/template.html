@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>{{COMPANY_NAME}} · {{POSITION}} 面试调研</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f7f8fa;
+    --border: #e6e8eb;
+    --text: #1a1d21;
+    --text-soft: #5b6470;
+    --text-mute: #8a929c;
+    --accent: #1f6feb;
+    --accent-soft: #e8f0fe;
+    --success: #1a7f37;
+    --warning: #b97800;
+    --danger: #d1242f;
+    --danger-soft: #ffebe9;
+    --highlight: #fff8c5;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .layout { display: flex; max-width: 1180px; margin: 0 auto; }
+  .toc {
+    width: 220px; flex-shrink: 0; position: sticky; top: 0;
+    align-self: flex-start; height: 100vh; overflow-y: auto;
+    padding: 32px 16px 32px 24px;
+    border-right: 1px solid var(--border); background: var(--bg-soft);
+  }
+  .toc h4 { font-size: 12px; color: var(--text-mute); margin: 0 0 12px; letter-spacing: 1px; }
+  .toc ul { list-style: none; margin: 0; padding: 0; }
+  .toc li { margin: 0; }
+  .toc a {
+    display: block; padding: 8px 10px; margin-bottom: 2px;
+    color: var(--text-soft); text-decoration: none; font-size: 13px;
+    border-radius: 4px; border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .toc a:hover { background: #fff; color: var(--accent); }
+  .toc a.active { background: #fff; color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+  .toc .sub { padding-left: 22px; font-size: 12px; color: var(--text-mute); }
+  .toc .sub a { padding: 5px 10px; }
+  .toc .toc-group {
+    font-size: 11px; color: var(--text-mute);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 16px 10px 6px;
+  }
+
+  .main { flex: 1; padding: 36px 40px 80px; max-width: 920px; min-width: 0; }
+
+  .header { border-bottom: 2px solid var(--text); padding-bottom: 24px; margin-bottom: 24px; }
+  .header .tag {
+    display: inline-block; font-size: 12px; color: var(--accent);
+    background: var(--accent-soft); padding: 3px 10px; border-radius: 4px;
+    margin-bottom: 12px; letter-spacing: 1px;
+  }
+  .header h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; }
+  .header .meta { color: var(--text-mute); font-size: 13px; }
+  .header .meta span { margin-right: 16px; }
+
+  /* Tab nav */
+  .tab-nav {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+    position: sticky; top: 0;
+    background: var(--bg); z-index: 10;
+    padding-top: 8px;
+  }
+  .tab-btn {
+    background: none; border: none;
+    padding: 12px 22px; font-size: 15px; font-weight: 600;
+    color: var(--text-mute); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn .count { font-size: 12px; color: var(--text-mute); font-weight: 400; margin-left: 6px; }
+  .tab-btn.active .count { color: var(--accent); }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  section { margin-bottom: 48px; scroll-margin-top: 64px; }
+  section h2 { font-size: 20px; font-weight: 700; margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  section h2 .num { display: inline-block; color: var(--accent); margin-right: 8px; font-weight: 700; }
+
+  /* Key highlight 重点信息强调 */
+  .key-point {
+    background: #fff8e1;
+    border-left: 4px solid var(--warning);
+    padding: 12px 16px; margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 14px; line-height: 1.7;
+  }
+  .key-point .key-label {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    color: var(--warning); background: rgba(185, 120, 0, 0.12);
+    padding: 2px 8px; border-radius: 3px;
+    margin-right: 8px; letter-spacing: 0.5px; vertical-align: middle;
+  }
+  mark.hl { background: var(--highlight); color: var(--text); padding: 1px 4px; border-radius: 3px; font-weight: 600; }
+  mark.hl-accent { background: var(--accent-soft); color: var(--accent); padding: 1px 4px; border-radius: 3px; font-weight: 600; }
+
+  .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 24px; }
+  .info-item { padding: 10px 14px; background: var(--bg-soft); border-left: 3px solid var(--accent); border-radius: 4px; }
+  .info-item .label { font-size: 12px; color: var(--text-mute); margin-bottom: 4px; }
+  .info-item .value { font-size: 14px; color: var(--text); }
+
+  .bullet-list { list-style: none; padding: 0; }
+  .bullet-list li { padding: 10px 0 10px 24px; position: relative; border-bottom: 1px dashed var(--border); }
+  .bullet-list li:last-child { border-bottom: none; }
+  .bullet-list li::before { content: "▸"; color: var(--accent); position: absolute; left: 4px; top: 10px; }
+  .bullet-list li strong { color: var(--text); font-weight: 600; }
+  .bullet-list li .date { color: var(--text-mute); font-size: 13px; margin-right: 8px; }
+
+  .section-summary {
+    background: var(--bg-soft); border-left: 3px solid var(--text-soft);
+    padding: 12px 16px; margin-bottom: 16px;
+    border-radius: 0 4px 4px 0;
+    font-size: 14px; color: var(--text-soft);
+  }
+
+  /* JD 拆解表 */
+  .jd-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .jd-table th, .jd-table td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+  .jd-table th { background: var(--bg-soft); font-weight: 600; font-size: 13px; }
+  .jd-table th:first-child { width: 36%; }
+  .jd-table th:last-child { width: 28%; }
+  .jd-table td:first-child { background: var(--bg-soft); color: var(--text-soft); font-size: 13px; }
+
+  /* 能力 bar */
+  .ability-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 80px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+    gap: 16px;
+  }
+  .ability-row:last-child { border-bottom: none; }
+  .ability-name { font-size: 14px; font-weight: 600; }
+  .ability-bar-wrap { background: var(--bg-soft); height: 8px; border-radius: 4px; overflow: hidden; }
+  .ability-bar { height: 100%; border-radius: 4px; }
+  .ability-bar.strong { background: var(--success); }
+  .ability-bar.medium { background: var(--warning); }
+  .ability-bar.weak { background: var(--danger); }
+  .ability-tag { font-size: 12px; font-weight: 600; text-align: right; }
+  .ability-tag.strong { color: var(--success); }
+  .ability-tag.medium { color: var(--warning); }
+  .ability-tag.weak { color: var(--danger); }
+
+  /* Fit 分析 */
+  .fit-row {
+    display: grid; grid-template-columns: 28px 1fr;
+    gap: 12px; padding: 14px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .fit-row:last-child { border-bottom: none; }
+  .fit-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: #fff;
+    flex-shrink: 0;
+  }
+  .fit-icon.strong { background: var(--success); }
+  .fit-icon.medium { background: var(--warning); }
+  .fit-icon.gap { background: var(--danger); }
+  .fit-body .fit-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .fit-body .fit-evidence { font-size: 13px; color: var(--text-soft); line-height: 1.7; }
+  .fit-body .fit-evidence .label {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 1px 6px; border-radius: 3px;
+    margin-right: 6px; vertical-align: middle;
+  }
+  .label.strong { background: #e8f5ec; color: var(--success); }
+  .label.medium { background: #fff8e1; color: var(--warning); }
+  .label.gap { background: var(--danger-soft); color: var(--danger); }
+  .label.tip { background: var(--accent-soft); color: var(--accent); }
+
+  .product-card { border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; margin-bottom: 12px; scroll-margin-top: 64px; }
+  .product-card h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
+  .product-card .desc { color: var(--text-soft); font-size: 14px; margin-bottom: 8px; }
+  .product-card .stat { display: inline-block; font-size: 12px; color: var(--success); background: #e8f5ec; padding: 2px 8px; border-radius: 3px; margin-right: 6px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 12px; }
+  th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-soft); font-weight: 600; font-size: 13px; }
+  th:first-child { width: 18%; }
+  td:first-child { font-weight: 600; background: var(--bg-soft); color: var(--text-soft); }
+  .highlight-col { background: var(--accent-soft) !important; color: var(--text); }
+
+  .advantage { border: 1px solid var(--accent); border-left: 4px solid var(--accent); background: var(--accent-soft); padding: 16px 18px; border-radius: 4px; margin-top: 12px; }
+  .advantage .title { font-weight: 700; color: var(--accent); margin-bottom: 8px; font-size: 14px; }
+  .advantage p { margin: 6px 0; font-size: 14px; }
+
+  .qa-card { border: 1px solid var(--border); border-radius: 6px; margin-bottom: 20px; overflow: hidden; scroll-margin-top: 64px; }
+  .qa-card .q { background: var(--bg-soft); padding: 14px 18px; font-weight: 600; font-size: 15px; border-bottom: 1px solid var(--border); }
+  .qa-card .q .qnum { display: inline-block; color: var(--accent); margin-right: 8px; }
+  .qa-card .a { padding: 14px 18px; }
+  .qa-card .a .block { margin-bottom: 14px; }
+  .qa-card .a .block:last-child { margin-bottom: 0; }
+  .qa-card .a .block-label { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 3px; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .block-label.conclusion { background: #fff4e5; color: var(--warning); }
+  .block-label.understand { background: var(--accent-soft); color: var(--accent); }
+  .block-label.case { background: #e8f5ec; color: var(--success); }
+  .qa-card .a p { margin: 0; font-size: 14px; color: var(--text); }
+
+  .rq-card { border-left: 3px solid var(--accent); background: var(--bg-soft); padding: 12px 16px; margin-bottom: 12px; border-radius: 0 4px 4px 0; }
+  .rq-card .question { font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+  .rq-card .why { font-size: 13px; color: var(--text-soft); }
+  .rq-card .why::before { content: "→ "; color: var(--accent); }
+
+  .sources { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 60px; color: var(--text-mute); font-size: 12px; scroll-margin-top: 64px; }
+  .sources h3 { color: var(--text-soft); font-size: 14px; margin: 0 0 8px; }
+  .sources ol { margin: 0; padding-left: 20px; }
+  .sources li { margin-bottom: 4px; word-break: break-all; }
+  .sources a { color: var(--text-mute); text-decoration: none; }
+  .sources a:hover { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .toc { display: none; }
+    .main { padding: 20px 20px 60px; }
+    .tab-btn { padding: 10px 14px; font-size: 14px; }
+  }
+  @media print {
+    .toc, .tab-nav { display: none; }
+    .tab-pane { display: block !important; }
+    .main { padding: 20px; }
+    .qa-card, .product-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar TOC -->
+  <nav class="toc">
+    <h4>目录</h4>
+    {{TOC_ITEMS}}
+  </nav>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <div class="header">
+      <span class="tag">INTERVIEW RESEARCH</span>
+      <h1>{{COMPANY_NAME}} · {{POSITION}}</h1>
+      <div class="meta">
+        <span>调研日期：{{REPORT_DATE}}</span>
+        <span>信息时效：{{INFO_FRESHNESS}}</span>
+        <span>简历版本：{{RESUME_NAME}}</span>
+      </div>
+    </div>
+
+    <!-- Tab nav -->
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="report">📋 调研报告 <span class="count">9 节</span></button>
+      <button class="tab-btn" data-tab="qa">💬 面试问答 <span class="count">12 问 + 反问</span></button>
+    </div>
+
+    <!-- =========================== -->
+    <!-- TAB 1 · 调研报告              -->
+    <!-- =========================== -->
+    <div class="tab-pane active" id="pane-report">
+
+      <!-- 01 岗位画像 -->
+      <section id="sec-1">
+        <h2><span class="num">01</span>岗位画像</h2>
+        <div class="key-point">
+          <span class="key-label">⚡ 一句话画像</span>
+          {{POSITION_PROFILE_KEY}}
+        </div>
+        <div class="info-grid">
+          {{POSITION_PROFILE_ITEMS}}
+        </div>
+      </section>
+
+      <!-- 02 JD 拆解 -->
+      <section id="sec-2">
+        <h2><span class="num">02</span>JD 拆解</h2>
+        <div class="section-summary">{{JD_BREAKDOWN_SUMMARY}}</div>
+        <table class="jd-table">
+          <thead><tr><th>JD 原文</th><th>实际工作内容</th><th>考察什么</th></tr></thead>
+          <tbody>
+            {{JD_BREAKDOWN_ROWS}}
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 03 能力需求 -->
+      <section id="sec-3">
+        <h2><span class="num">03</span>能力需求</h2>
+        <div class="section-summary">{{ABILITY_SUMMARY}}</div>
+        {{ABILITY_ROWS}}
+      </section>
+
+      <!-- 04 候选人 Fit 分析 -->
+      <section id="sec-4">
+        <h2><span class="num">04</span>候选人 Fit 分析</h2>
+        <div class="key-point">
+          <span class="key-label">🎯 整体判断</span>
+          {{FIT_OVERALL}}
+        </div>
+        {{FIT_ROWS}}
+      </section>
+
+      <!-- 05 企业基本信息 -->
+      <section id="sec-5">
+        <h2><span class="num">05</span>企业基本信息</h2>
+        <div class="key-point">
+          <span class="key-label">📌 必记数据</span>
+          {{COMPANY_KEY_FACTS}}
+        </div>
+        <div class="info-grid">
+          {{COMPANY_INFO_ITEMS}}
+        </div>
+      </section>
+
+      <!-- 06 主要业务线 -->
+      <section id="sec-6">
+        <h2><span class="num">06</span>主要业务线</h2>
+        <div class="section-summary">{{BUSINESS_LINES_SUMMARY}}</div>
+        <ul class="bullet-list">
+          {{BUSINESS_LINES}}
+        </ul>
+      </section>
+
+      <!-- 07 主要产品 -->
+      <section id="sec-7">
+        <h2><span class="num">07</span>主要产品</h2>
+        <div class="section-summary">{{PRODUCTS_SUMMARY}}</div>
+        {{PRODUCT_CARDS}}
+      </section>
+
+      <!-- 08 竞品对比 + 优势 -->
+      <section id="sec-8">
+        <h2><span class="num">08</span>主要竞品 & 对比</h2>
+        {{COMPARISON_TABLE}}
+        <div class="advantage">
+          <div class="title">{{COMPANY_NAME}} 的差异化优势</div>
+          {{ADVANTAGE_CONTENT}}
+        </div>
+      </section>
+
+      <!-- 09 发展方向推断 -->
+      <section id="sec-9">
+        <h2><span class="num">09</span>发展方向推断</h2>
+        <div class="key-point">
+          <span class="key-label">🔮 推断主线</span>
+          {{DIRECTION_KEY}}
+        </div>
+        <ul class="bullet-list">
+          {{DIRECTION_ITEMS}}
+        </ul>
+      </section>
+
+      <!-- 信息来源 -->
+      <div class="sources" id="sec-src">
+        <h3>信息来源</h3>
+        <ol>
+          {{SOURCES_LIST}}
+        </ol>
+        <p style="margin-top:12px;">本报告由 AI 调研生成，所有动态信息均已标注日期，请在面试前核对最新进展。</p>
+      </div>
+
+    </div><!-- /pane-report -->
+
+    <!-- =========================== -->
+    <!-- TAB 2 · 面试问答              -->
+    <!-- =========================== -->
+    <div class="tab-pane" id="pane-qa">
+
+      <section id="sec-qa-biz">
+        <h2>面试预设问题 · 业务类（6）</h2>
+        <div class="section-summary">
+          <strong>业务问题</strong>：聚焦"如果你是 PM，你会怎么做"——考察产品判断、场景拆解、优先级取舍。
+          回答主体是<strong>具体的产品动作</strong>，简历经历作为佐证。
+        </div>
+        {{BIZ_QA_CARDS}}
+      </section>
+
+      <section id="sec-qa-tech">
+        <h2>面试预设问题 · 技术类（6）</h2>
+        <div class="section-summary">
+          <strong>技术问题</strong>：聚焦"你怎么理解 Agent / MCP / 评测 / 端侧 AI 这些核心概念"——考察技术理解深度。
+          回答主体是<strong>概念拆解 + 设计原则 + 具体做法</strong>，简历经历作为佐证。
+        </div>
+        {{TECH_QA_CARDS}}
+      </section>
+
+      <section id="sec-rq">
+        <h2>反问面试官</h2>
+        <div class="section-summary">反问环节是面试加分项。下面问题各自考察一个面试官视角，问出"你研究过公司 + 在思考具体落地"的信号。</div>
+        {{REVERSE_QUESTIONS}}
+      </section>
+
+    </div><!-- /pane-qa -->
+
+  </main>
+</div>
+
+<script>
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanes = document.querySelectorAll('.tab-pane');
+
+  function activateTab(tabName) {
+    tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+    tabPanes.forEach(p => p.classList.toggle('active', p.id === 'pane-' + tabName));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    updateTocActive();
+  }
+
+  tabBtns.forEach(btn => btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
+
+  document.querySelectorAll('.toc a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetTab = link.dataset.tab;
+      const targetId = link.getAttribute('href').slice(1);
+      if (targetTab) {
+        const currentActive = document.querySelector('.tab-btn.active').dataset.tab;
+        if (currentActive !== targetTab) activateTab(targetTab);
+      }
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 30);
+    });
+  });
+
+  function updateTocActive() {
+    const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+    const visibleLinks = Array.from(document.querySelectorAll('.toc a'))
+      .filter(a => a.dataset.tab === activeTab);
+    const sections = visibleLinks.map(a => {
+      const id = a.getAttribute('href').slice(1);
+      return { link: a, el: document.getElementById(id) };
+    }).filter(x => x.el);
+
+    let active = sections[0];
+    const y = window.scrollY + 120;
+    for (const s of sections) {
+      if (s.el.offsetTop <= y) active = s;
+    }
+    document.querySelectorAll('.toc a').forEach(l => l.classList.remove('active'));
+    if (active) active.link.classList.add('active');
+  }
+  window.addEventListener('scroll', updateTocActive, { passive: true });
+  updateTocActive();
+</script>
+</body>
+</html>
