@@ -20,7 +20,7 @@
 ```bash
 # 克隆到 Claude Code 的 skills 目录
 cd ~/.claude/skills/
-git clone https://github.com/你的用户名/interview-company-research.git
+git clone https://github.com/Accelereator/interview-company-research.git
 ```
 
 重启 Claude Code 后，skill 会自动被识别。
